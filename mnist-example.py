@@ -1,3 +1,5 @@
+# Modified from Kubeflow Pipelines Examples https://github.com/kubeflow/pipelines/
+
 import kfp
 import kfp.dsl as dsl
 from kfp import components
