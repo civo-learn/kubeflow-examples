@@ -1,4 +1,0 @@
-ctransformers
-kfp
-flask
-gevent
