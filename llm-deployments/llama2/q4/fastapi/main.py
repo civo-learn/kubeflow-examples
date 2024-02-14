@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 config = {
-    "max_new_tokens": 4096,
+    "max_new_tokens": 512,
     "repetition_penalty": 1.1,
     "temperature": 0.1,
 }
@@ -25,7 +25,7 @@ llm = AutoModelForCausalLM.from_pretrained("llama-2-7b-chat.ggmlv3.q4_1.bin",
                                            lib="avx2",
                                            gpu_layers=110, 
                                            threads=8,
-                                           context_length = 4096,
+                                           context_length = 1024,
                                            **config)
 app = fastapi.FastAPI(title="Llama 2")
 app.add_middleware(
@@ -58,14 +58,14 @@ class Message(BaseModel):
 
 class ChatCompletionRequest(BaseModel):
     messages: List[Message]
-    max_tokens: int = 4096
+    max_tokens: int = 512
 
 @app.post("/v1/completions")
 async def completion(request: ChatCompletionRequestV0, response_mode=None):
     response = llm(request.prompt)
     return response
 
-async def generate_response(chat_chunks, llm):
+def generate_response(chat_chunks, llm):
     response = ""
     for chat_chunk in chat_chunks:
         response += llm.detokenize(chat_chunk)
@@ -82,10 +82,10 @@ async def generate_response(chat_chunks, llm):
             }
         ]
     }
-    yield json.dumps(response)
+    return response
 
 @app.post("/v1/chat/completions")
-async def chat(request: ChatCompletionRequest):
+def chat(request: ChatCompletionRequest):
     combined_messages = ' '.join([message.content for message in request.messages])
     tokens = llm.tokenize(combined_messages)
     
@@ -94,7 +94,7 @@ async def chat(request: ChatCompletionRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    return EventSourceResponse(generate_response(chat_chunks, llm))
+    return generate_response(chat_chunks, llm)
 
 async def stream_response(tokens, llm):
     try:
