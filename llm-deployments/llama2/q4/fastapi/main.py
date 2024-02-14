@@ -17,13 +17,13 @@ config = {
     "max_new_tokens": 4096,
     "repetition_penalty": 1.1,
     "temperature": 0.1,
-    "stream": True,
 }
 llm = AutoModelForCausalLM.from_pretrained("llama-2-7b-chat.ggmlv3.q4_1.bin",
                                            model_type="llama",
                                            lib="avx2",
                                            gpu_layers=110, 
                                            threads=8,
+                                           context_length = 4096,
                                            **config)
 app = fastapi.FastAPI(title="Llama 2")
 app.add_middleware(
@@ -56,7 +56,7 @@ class Message(BaseModel):
 
 class ChatCompletionRequest(BaseModel):
     messages: List[Message]
-    max_tokens: int = 1024
+    max_tokens: int = 4096
 
 @app.post("/v1/completions")
 async def completion(request: ChatCompletionRequestV0, response_mode=None):
