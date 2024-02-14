@@ -1,17 +1,19 @@
+import os
 import json
-from typing import Callable, List, Dict, Any, Generator
-from functools import partial
-
 import fastapi
 import uvicorn
-from fastapi import HTTPException, Depends, Request
-from fastapi.responses import HTMLResponse
+import concurrent.futures
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Request
+from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
-from anyio import create_memory_object_stream
-from anyio.to_thread import run_sync
 from ctransformers import AutoModelForCausalLM
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import List, Generator
+import logging
+import asyncio
+from datetime import datetime
+
 
 config = {
     "max_new_tokens": 4096,
@@ -41,7 +43,7 @@ async def index():
         <head>
         </head>
         <body>
-            Run 4-bit LLama 2!
+            <h2>Run Llama 2</h2>
         </body>
     </html>
     """
@@ -64,20 +66,23 @@ async def completion(request: ChatCompletionRequestV0, response_mode=None):
     return response
 
 async def generate_response(chat_chunks, llm):
+    response = ""
     for chat_chunk in chat_chunks:
-        response = {
-            'choices': [
-                {
-                    'message': {
-                        'role': 'system',
-                        'content': llm.detokenize(chat_chunk)
-                    },
-                    'finish_reason': 'stop' if llm.is_eos_token(chat_chunk) else 'unknown'
-                }
-            ]
-        }
-        yield dict(data=json.dumps(response))
-    yield dict(data="[DONE]")
+        response += llm.detokenize(chat_chunk)
+    response = {
+        "created": str(datetime.now()),
+        "model": "llama-2",     
+        'choices': [
+            {
+                'message': {
+                    'role': 'system',
+                    'content': response
+                },
+                'finish_reason': 'stop'
+            }
+        ]
+    }
+    yield json.dumps(response)
 
 @app.post("/v1/chat/completions")
 async def chat(request: ChatCompletionRequest):
@@ -106,8 +111,7 @@ async def stream_response(tokens, llm):
                     }
                 ]
             }
-            yield dict(data=json.dumps(response))
-        yield dict(data="[DONE]")
+            yield json.dumps(response)
     except Exception as e:
         print(f"Exception in event publisher: {str(e)}")
 
@@ -117,16 +121,6 @@ async def chatV2_endpoint(request: Request, body: ChatCompletionRequest):
     tokens = llm.tokenize(combined_messages)
 
     return EventSourceResponse(stream_response(tokens, llm))
-
-@app.post("/v0/chat/completions")
-async def chat(request: ChatCompletionRequestV0, response_mode=None):
-    tokens = llm.tokenize(request.prompt)
-    async def server_sent_events(chat_chunks, llm):
-        for chat_chunk in llm.generate(chat_chunks):
-            yield dict(data=json.dumps(llm.detokenize(chat_chunk)))
-        yield dict(data="[DONE]")
-
-    return EventSourceResponse(server_sent_events(tokens, llm))
-
+        
 if __name__ == "__main__":
   uvicorn.run(app, host="0.0.0.0", port=8000)
