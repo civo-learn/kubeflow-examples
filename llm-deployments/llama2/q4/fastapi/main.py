@@ -14,7 +14,7 @@ from ctransformers import AutoModelForCausalLM
 from pydantic import BaseModel
 
 config = {
-    "max_new_tokens": 256,
+    "max_new_tokens": 4096,
     "repetition_penalty": 1.1,
     "temperature": 0.1,
     "stream": True,
@@ -56,7 +56,7 @@ class Message(BaseModel):
 
 class ChatCompletionRequest(BaseModel):
     messages: List[Message]
-    max_tokens: int = 256
+    max_tokens: int = 1024
 
 @app.post("/v1/completions")
 async def completion(request: ChatCompletionRequestV0, response_mode=None):
