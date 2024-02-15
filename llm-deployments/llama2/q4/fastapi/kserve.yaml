@@ -8,7 +8,7 @@ metadata:
 spec:
   predictor:
     containers:
-      - image: joshcivo/kserve-llama2:latest
+      - image: rishitdagli/kf-civo-llama2-q4-oai:0.1.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
