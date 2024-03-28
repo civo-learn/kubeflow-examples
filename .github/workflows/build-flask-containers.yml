@@ -29,7 +29,7 @@ jobs:
               docker push ghcr.io/civo-learn/llama2-flask-kf-q4:latest
 
               docker build ./q2/ --tag ghcr.io/civo-learn/llama2-flask-kf-q2:latest
-              docker push ghcr.io/civo-learn/llama2-flask-kf-q4:latest
+              docker push ghcr.io/civo-learn/llama2-flask-kf-q2:latest
               
               docker build ./q8/ --tag ghcr.io/civo-learn/llama2-flask-kf-q8:latest
-              docker push ghcr.io/civo-learn/llama2-flask-kf-q4:latest
+              docker push ghcr.io/civo-learn/llama2-flask-kf-q8:latest
