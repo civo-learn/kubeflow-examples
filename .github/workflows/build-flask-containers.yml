@@ -1,7 +1,4 @@
-name: Deploy Images to GHCR
-
-env:
-  DOTNET_VERSION: '6.0.x'
+name: Deploy Flask Images to GHCR
 
 on:
   push:
