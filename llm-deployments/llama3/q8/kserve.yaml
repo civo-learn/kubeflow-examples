@@ -1,14 +1,14 @@
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
 metadata:
-  name: "llama2"
+  name: "llama3"
   namespace: my-profile
   annotations:
     "sidecar.istio.io/inject": "false"
 spec:
   predictor:
     containers:
-      - image: ghcr.io/civo-learn/llama2-flask-kf-q4:latest
+      - image: ghcr.io/civo-learn/llama3-flask-kf-q8:latest
         imagePullPolicy: IfNotPresent
         resources:
           limits:

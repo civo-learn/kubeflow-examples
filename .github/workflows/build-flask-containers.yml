@@ -9,9 +9,6 @@ on:
 jobs:
       push-store-image:
         runs-on: ubuntu-latest
-        defaults:
-          run:
-            working-directory: './llm-deployments/llama2/'
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
@@ -25,11 +22,21 @@ jobs:
 
           - name: 'Build and push images'
             run: |
-              docker build ./q4/flask/ --tag ghcr.io/civo-learn/llama2-flask-kf-q4:latest
+              docker build ./llm-deployments/llama2/q4/flask/ --tag ghcr.io/civo-learn/llama2-flask-kf-q4:latest
               docker push ghcr.io/civo-learn/llama2-flask-kf-q4:latest
 
-              docker build ./q2/ --tag ghcr.io/civo-learn/llama2-flask-kf-q2:latest
+              docker build ./llm-deployments/llama2/q2/ --tag ghcr.io/civo-learn/llama2-flask-kf-q2:latest
               docker push ghcr.io/civo-learn/llama2-flask-kf-q2:latest
               
-              docker build ./q8/ --tag ghcr.io/civo-learn/llama2-flask-kf-q8:latest
+              docker build ./llm-deployments/llama2/q8/ --tag ghcr.io/civo-learn/llama2-flask-kf-q8:latest
               docker push ghcr.io/civo-learn/llama2-flask-kf-q8:latest
+
+
+              docker build ./llm-deployments/llama3/q4/ --tag ghcr.io/civo-learn/llama3-flask-kf-q4:latest
+              docker push ghcr.io/civo-learn/llama3-flask-kf-q4:latest
+
+              docker build ./llm-deployments/llama3/q2/ --tag ghcr.io/civo-learn/llama3-flask-kf-q2:latest
+              docker push ghcr.io/civo-learn/llama3-flask-kf-q2:latest
+              
+              docker build ./llm-deployments/llama3/q8/ --tag ghcr.io/civo-learn/llama3-flask-kf-q8:latest
+              docker push ghcr.io/civo-learn/llama3-flask-kf-q8:latest
