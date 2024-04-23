@@ -8,7 +8,7 @@ COPY requirements.txt .
 COPY app.py .
 
 RUN apt-get update && \
-    apt-get install -y wget build-essential cmake libopenblas-dev && \
+    apt-get install -y wget build-essential cmake ninja-build libopenblas-dev pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir -r requirements.txt
