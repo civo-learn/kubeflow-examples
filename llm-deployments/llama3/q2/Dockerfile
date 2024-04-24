@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV CMAKE_ARGS="-DLLAMA_BLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS"
 RUN pip install llama-cpp-python
 
-RUN wget https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct-IQ2_S.gguf -o llama3.gguf
+RUN wget https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct-IQ2_S.gguf -O llama3.gguf
 
 # EXPOSE 8080
 
