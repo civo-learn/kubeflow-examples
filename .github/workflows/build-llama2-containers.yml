@@ -1,4 +1,4 @@
-name: Deploy Flask Images to GHCR
+name: Push Llama3 Flask Containers
 
 on:
   push:
@@ -30,7 +30,6 @@ jobs:
               
               docker build ./llm-deployments/llama3/q8/ --tag ghcr.io/civo-learn/llama3-flask-kf-q8:latest
               docker push ghcr.io/civo-learn/llama3-flask-kf-q8:latest
-              
               
               docker build ./llm-deployments/llama2/q4/flask/ --tag ghcr.io/civo-learn/llama2-flask-kf-q4:latest
               docker push ghcr.io/civo-learn/llama2-flask-kf-q4:latest
