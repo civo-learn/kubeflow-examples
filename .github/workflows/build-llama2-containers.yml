@@ -1,4 +1,4 @@
-name: Push Llama3 Flask Containers
+name: Push Llama2 Flask Containers
 
 on:
   push:
