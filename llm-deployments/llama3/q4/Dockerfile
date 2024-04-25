@@ -12,6 +12,7 @@ RUN apt-get update && \
 
 ENV CMAKE_ARGS="-DLLAMA_BLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS"
 RUN pip install llama-cpp-python
+RUN pip install -r requirements.txt
 
 RUN wget -q https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf -O llama3.gguf
 
